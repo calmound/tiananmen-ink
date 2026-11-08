@@ -1,0 +1,15 @@
+app/node_modules/
+app/dist/
+.DS_Store
+.env
+.env.*
+*.log
+__pycache__/
+
+# Local development records and raw map downloads.
+/.playwright-mcp/
+/revisions/
+/docs/
+/data/osm/
+/plan.md
+/SPEC.md

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#efe8da" />
+    <meta name="description" content="雪中京城：北京二环以内可缩放、拖动、旋转的水墨三维地图。" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%23efe8da'/%3E%3Cpath d='M8 40h48L44 29H20ZM15 27h34L39 18H25ZM17 42v9h30v-9' fill='%237e7465'/%3E%3C/svg%3E" />
+    <title>雪中京城 · 水墨地图</title>
+  </head>
+  <body>
+    <canvas id="scene" aria-label="北京二环以内的水墨三维地图。拖动平移，滚轮缩放，右键旋转"></canvas>
+    <canvas id="frame-branch" class="frame-branch" aria-hidden="true"></canvas>
+    <div id="labels" aria-label="地点名称"></div>
+
+    <header class="masthead">
+      <h1>雪中京城</h1>
+      <p class="eyebrow">水墨地图 · 北京二环以内</p>
+      <!-- Seal text 雪卷: kept for now by the author (2026-11-04); may change later. -->
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true">
+        <rect x="1.5" y="1.5" width="37" height="37" rx="3" />
+        <text x="20" y="18" text-anchor="middle">雪</text>
+        <text x="20" y="34" text-anchor="middle">卷</text>
+      </svg>
+    </header>
+
+    <form id="search" class="search" role="search" autocomplete="off">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" /><path d="m13 13 4.5 4.5" /></svg>
+      <input type="search" placeholder="搜索地名，如 太和殿、钟楼" aria-label="搜索地名" />
+      <ul role="listbox" hidden></ul>
+    </form>
+
+    <aside id="card" class="card" aria-hidden="true" aria-live="polite"></aside>
+
+    <div class="corner-left">
+      <svg id="minimap" class="minimap" aria-label="二环小地图，点击跳转" role="img"></svg>
+      <div id="scale" class="scale" aria-hidden="true"><span class="scale-bar"></span><span class="scale-text"></span></div>
+      <footer>地图数据 <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap contributors</a> · 部分高度为估计值</footer>
+    </div>
+
+    <div class="moods" role="radiogroup" aria-label="时令">
+      <button type="button" role="radio" data-mood="snow" aria-checked="true">雪昼</button>
+      <button type="button" role="radio" data-mood="clear" aria-checked="false">晴昼</button>
+      <button type="button" role="radio" data-mood="night" aria-checked="false">雪夜</button>
+    </div>
+
+    <div class="map-tools">
+      <button id="wander" type="button" class="wide" aria-pressed="false" title="镜头绕当前位置缓慢环视">漫游</button>
+      <button id="capture" type="button" class="wide" title="把当前画面存为 PNG（不含文字标注）">存图</button>
+      <button id="zoom-in" type="button" aria-label="放大" title="放大">＋</button>
+      <button id="zoom-out" type="button" aria-label="缩小" title="缩小">－</button>
+      <button id="compass" type="button" aria-label="指北，点击朝北" title="点击朝北">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 16 13H8Z" fill="#b5382a"/><path d="M12 22 8 13h8Z" fill="#a99f8e"/></svg>
+      </button>
+      <button id="home" type="button" class="wide">全景</button>
+    </div>
+    <p id="hint" class="hint">拖动平移 · 滚轮缩放 · 右键旋转 · 点击地名查看</p>
+    <div id="loading" role="status"><div class="ink-drop" aria-hidden="true"></div><p>研墨铺纸…</p></div>
+    <div id="error" role="alert" hidden></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

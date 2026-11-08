@@ -1,0 +1,171 @@
+:root {
+  --paper: #efe8da;
+  --paper-2: #e7dfcf;
+  --ink: #1a1714;
+  --ink-2: #3d3830;
+  --muted: #82796b;
+  --rule: #a99f8e;
+  --cinnabar: #b5382a;
+  --indigo: #4a6274;
+  --brush: "Kaiti SC", "STKaiti", "KaiTi", "LXGW WenKai", "Songti SC", serif;
+  --serif: "Songti SC", "Noto Serif SC", SimSun, serif;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: var(--serif);
+  font-synthesis: none;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+body { margin: 0; background: var(--paper); }
+#scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+#scene:active { cursor: grabbing; }
+#scene.over-label { cursor: pointer; }
+button { font: inherit; color: inherit; }
+
+/* Paper chips: every control sits on a slightly darker paper with an ink hairline. */
+.chip, .map-tools button, .search, .card, .minimap {
+  background: rgba(239, 232, 218, 0.92);
+  border: 1px solid var(--rule);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 6px 18px -12px rgba(26, 23, 20, 0.45);
+}
+
+/* Masthead: vertical brush title with a cinnabar seal. */
+.masthead { position: fixed; z-index: 2; left: 3vw; top: 4.4vh; display: flex; gap: 12px; align-items: flex-start; pointer-events: none; }
+.masthead h1 { margin: 0; writing-mode: vertical-rl; font: 400 clamp(30px, 3.2vw, 52px)/1 var(--brush); letter-spacing: 0.22em; color: var(--ink); }
+.eyebrow { margin: 6px 0 0; writing-mode: vertical-rl; font-size: 11px; letter-spacing: 0.32em; color: var(--muted); }
+.seal { width: 30px; height: 30px; margin-top: 4px; }
+.seal rect { fill: var(--cinnabar); }
+.seal text { fill: var(--paper); font: 600 14px/1 var(--brush); }
+
+/* Place-name labels: refreshed when the camera changes, at most 30 Hz. */
+#labels { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+.map-label { position: absolute; left: 0; top: 0; padding: 0 0 9px; border: 0; background: none; color: var(--ink);
+  white-space: nowrap; opacity: 0; visibility: hidden; transition: opacity 0.3s ease; pointer-events: none; }
+.map-label.shown { opacity: var(--fade, 1); visibility: visible; }
+.map-label span { display: block; padding: 2px 7px; background: rgba(239, 232, 218, 0.9); letter-spacing: 0.14em;
+  box-shadow: 0 0 0 1px rgba(169, 159, 142, 0.35), 0 3px 10px -6px rgba(26, 23, 20, 0.5); }
+.map-label::after { content: ""; position: absolute; left: 50%; bottom: 0; height: 9px; border-left: 1px solid var(--ink); }
+/* Districts: vertical brush characters on a paper slip (题签), readable over pale snow and the night wash. */
+.map-label.tier-1 { padding: 0; }
+.map-label.tier-1 span { writing-mode: vertical-rl; font: 400 20px/1.05 var(--brush); letter-spacing: 0.18em; color: var(--ink);
+  padding: 8px 4px; background: rgba(243, 237, 224, 0.88); border-top: 3px solid var(--cinnabar);
+  box-shadow: 0 0 0 1px rgba(61, 56, 48, 0.28), 0 4px 12px -6px rgba(26, 23, 20, 0.55); }
+.map-label.tier-1::after { display: none; }
+/* Landmarks: paper-white characters on a cinnabar seal ground (朱砂底). */
+.map-label.tier-2 span { font-size: 14px; font-weight: 600; color: #fbf6ec; background: rgba(176, 52, 38, 0.94);
+  box-shadow: 0 0 0 1px rgba(110, 28, 18, 0.55), 0 3px 10px -5px rgba(26, 23, 20, 0.6); }
+.map-label.tier-2::after { border-left: 1px solid var(--cinnabar); }
+.map-label.tier-3 { --fade: var(--hall-fade, 1); }
+.map-label.tier-3 span { font-size: 12px; font-weight: 600; color: #2c2822; padding: 1px 6px; background: rgba(243, 237, 224, 0.9);
+  border-left: 2px solid var(--cinnabar); box-shadow: 0 0 0 1px rgba(61, 56, 48, 0.2); }
+/* Snowy night: paper labels turn a cooler grey; the cinnabar seals stay red. */
+body.night .map-label.tier-1 span, body.night .map-label.tier-3 span { background: rgba(222, 224, 228, 0.9); color: #1d1f24; }
+body.night .map-label.tier-3::after, body.night .map-label:not(.tier-2)::after { border-color: #d9d6cf; }
+.map-label.hover span { color: var(--cinnabar); }
+.map-label.tier-2.hover span { color: #fff; background: #8f2418; }
+
+/* Search (top right). */
+.search { position: fixed; z-index: 3; top: 22px; right: 24px; width: min(320px, 70vw); display: flex; align-items: center; gap: 8px; padding: 0 12px; height: 40px; }
+.search svg { width: 16px; height: 16px; flex: none; fill: none; stroke: var(--muted); stroke-width: 1.6; }
+.search input { flex: 1; min-width: 0; height: 100%; border: 0; background: none; font: 14px var(--serif); letter-spacing: 0.08em; color: var(--ink); outline: none; }
+.search input::placeholder { color: var(--muted); }
+.search input::-webkit-search-cancel-button { filter: grayscale(1); }
+.search:focus-within { border-color: var(--ink); }
+.search ul { position: absolute; left: -1px; right: -1px; top: 40px; margin: 0; padding: 4px 0; list-style: none; background: var(--paper); border: 1px solid var(--rule); border-top: 0; }
+.search li { display: flex; justify-content: space-between; gap: 12px; padding: 7px 14px; cursor: pointer; font-size: 14px; letter-spacing: 0.08em; }
+.search li em { font-style: normal; font-size: 12px; color: var(--muted); }
+.search li[aria-selected="true"], .search li:hover { background: var(--paper-2); color: var(--cinnabar); }
+
+/* Info card (slides in on the right). */
+.card { position: fixed; z-index: 3; top: 78px; right: 24px; width: min(300px, 80vw); padding: 22px 22px 18px; transform: translateX(calc(100% + 40px));
+  transition: transform 0.45s cubic-bezier(.16, 1, .3, 1); }
+.card.open { transform: none; }
+.card-close { position: absolute; top: 10px; right: 12px; width: 28px; height: 28px; border: 0; background: none; font-size: 20px; color: var(--muted); cursor: pointer; }
+.card-close:hover { color: var(--cinnabar); }
+.card-kind { margin: 0 0 6px; font-size: 12px; letter-spacing: 0.3em; color: var(--cinnabar); }
+.card-name { margin: 0 0 14px; font: 400 30px/1.1 var(--brush); letter-spacing: 0.12em; }
+.card dl { display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; margin: 0 0 14px; padding: 12px 0 0; border-top: 1px solid var(--rule); font-size: 14px; }
+.card dt { color: var(--muted); letter-spacing: 0.2em; }
+.card dd { margin: 0; }
+.card dd span, .card dd a { margin-left: 6px; font-size: 11px; color: var(--muted); }
+.card dd a { color: var(--indigo); }
+.card dd .est { color: var(--cinnabar); }
+.card-note { margin: 0; font-size: 11px; line-height: 1.6; color: var(--muted); }
+
+/* Bottom left: minimap, scale bar, attribution. */
+.corner-left { position: fixed; z-index: 2; left: 3vw; bottom: 3vh; display: grid; gap: 10px; justify-items: start; }
+.minimap { width: 168px; height: 176px; padding: 6px; cursor: crosshair; }
+.minimap .mm-ring { fill: rgba(239, 232, 218, 0.6); stroke: var(--ink-2); stroke-width: 26; }
+.minimap .mm-water { fill: rgba(74, 98, 116, 0.42); }
+.minimap .mm-road { fill: none; stroke: var(--rule); stroke-width: 14; }
+.minimap .mm-palace { fill: none; stroke: var(--cinnabar); stroke-width: 26; }
+.minimap .mm-view { fill: rgba(26, 23, 20, 0.08); stroke: var(--ink); stroke-width: 18; stroke-linejoin: round; }
+.minimap .mm-target { fill: var(--cinnabar); }
+.scale { display: flex; align-items: flex-end; gap: 8px; font-size: 11px; color: var(--ink-2); letter-spacing: 0.1em; }
+.scale-bar { display: block; height: 6px; border: 1px solid var(--ink); border-top: 0; transition: width 0.2s; }
+footer { color: var(--muted); font-size: 10px; letter-spacing: 0.04em; }
+footer a { color: inherit; text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+footer a:focus-visible { outline: 1px solid var(--cinnabar); outline-offset: 4px; }
+
+/* Mood switch (bottom centre): 雪昼 / 晴昼 / 雪夜. */
+.moods { position: fixed; z-index: 2; left: 50%; bottom: 3vh; transform: translateX(-50%); display: flex; padding: 3px; gap: 2px;
+  background: rgba(239, 232, 218, 0.92); border: 1px solid var(--rule); box-shadow: 0 6px 18px -12px rgba(26, 23, 20, 0.45); }
+.moods button { height: 30px; padding: 0 14px; white-space: nowrap; border: 0; background: none; font: 14px var(--brush); letter-spacing: 0.2em; color: var(--ink-2); cursor: pointer; }
+.moods button[aria-checked="true"] { background: var(--ink); color: var(--paper); }
+.moods button:hover:not([aria-checked="true"]) { color: var(--cinnabar); }
+.moods button:focus-visible { outline: 1px solid var(--cinnabar); outline-offset: 1px; }
+.map-tools button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+/* Bottom right: zoom, compass, overview. */
+.map-tools { position: fixed; z-index: 2; right: 24px; bottom: 3vh; display: flex; gap: 8px; align-items: center; }
+.map-tools button { height: 36px; min-width: 36px; padding: 0 10px; font-size: 16px; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
+.map-tools button.wide { font-size: 14px; letter-spacing: 0.24em; padding: 0 14px; }
+.map-tools button:hover { border-color: var(--ink); color: var(--cinnabar); }
+.map-tools button:focus-visible { outline: 1px solid var(--cinnabar); outline-offset: 2px; }
+#compass { padding: 0; display: grid; place-items: center; }
+#compass svg { width: 20px; height: 20px; transition: transform 0.1s linear; }
+
+.hint { position: fixed; z-index: 2; left: 50%; top: 32px; margin: 0; transform: translateX(-50%); color: var(--muted); font-size: 12px;
+  letter-spacing: 0.2em; white-space: nowrap; opacity: 0; transition: opacity 0.8s ease; pointer-events: none; }
+.hint.visible { opacity: 1; }
+
+/* Loading: an ink drop spreading on paper. */
+#loading, #error { position: fixed; z-index: 4; inset: 0; display: grid; place-content: center; justify-items: center; gap: 18px; padding: 30px;
+  background: var(--paper); color: var(--muted); font-size: 14px; letter-spacing: 0.3em; }
+#loading[hidden], #error[hidden] { display: none; }
+.ink-drop { width: 56px; height: 56px; border-radius: 50%; background: radial-gradient(circle, var(--ink) 0 22%, rgba(26, 23, 20, 0.35) 45%, transparent 70%);
+  filter: blur(0.6px); animation: bleed 2.4s ease-in-out infinite; }
+@keyframes bleed { 0% { transform: scale(0.4); opacity: 0.2; } 60% { opacity: 0.9; } 100% { transform: scale(1.5); opacity: 0; } }
+#error a { color: var(--cinnabar); margin-top: 16px; }
+
+body .lil-gui { --title-text-color: #413c34; --background-color: #e9e1d2; --text-color: #413c34; --title-background-color: #dcd2c1; --widget-color: #d4c9b7; --hover-color: #c8bda9; --focus-color: #b8ac96; --number-color: #885448; --string-color: #6c6759; --font-size: 11px; }
+body .lil-gui.lil-root { top: 74px; right: 24px; max-height: calc(100vh - 150px); }
+body:has(.lil-gui) .card { right: 340px; }
+.target-overlay { position: fixed; z-index: 2; top: 24px; left: 24px; width: min(42vw, 720px); aspect-ratio: 16 / 9; object-fit: cover; pointer-events: none; outline: 1px solid var(--cinnabar); }
+
+@media (max-width: 850px) {
+  .hint, .minimap, .eyebrow { display: none; }
+  .masthead { left: 14px; top: 16px; gap: 6px; }
+  .masthead h1 { font-size: 26px; }
+  .seal { width: 22px; height: 22px; }
+  .search { top: 14px; right: 12px; width: calc(100vw - 96px); height: 38px; }
+  .search ul { top: 38px; }
+  /* Tools stack on the right; moods sit at the bottom centre; the card becomes a bottom sheet. */
+  .map-tools { right: 12px; bottom: 76px; flex-direction: column; align-items: flex-end; gap: 6px; }
+  .map-tools button.wide { padding: 0 10px; font-size: 13px; letter-spacing: 0.12em; }
+  .moods { bottom: 18px; }
+  .corner-left { left: 14px; bottom: 64px; }
+  footer { position: fixed; left: 14px; right: 14px; bottom: 4px; font-size: 9px; text-align: center; }
+  .card { top: auto; left: 12px; right: 12px; bottom: 64px; width: auto; transform: translateY(calc(100% + 80px)); }
+  .card.open { transform: none; }
+  .card-name { font-size: 26px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card, .map-label, .ink-drop { transition: none; animation: none; }
+}
+::selection { background: var(--cinnabar); color: var(--paper); }
+
+/* 框景墨枝 (decorative): a near plum branch in low views; never takes input. */
+.frame-branch { position: fixed; z-index: 1; top: 0; right: 0; pointer-events: none; opacity: 0; transition: opacity 0.6s ease; }
+@media (max-width: 720px) { .frame-branch { transform: scale(0.6); transform-origin: top right; } }

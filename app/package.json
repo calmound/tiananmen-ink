@@ -1,0 +1,15 @@
+{
+  "name": "tiananmen-ink",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview --host 127.0.0.1",
+    "verify": "node --import tsx scripts/verify.ts"
+  },
+  "dependencies": {"three": "0.187.0", "lil-gui": "0.21.0"},
+  "devDependencies": {"vite": "8.3.5", "typescript": "7.0.2", "@types/three": "0.187.0", "tsx": "4.23.15"}
+}

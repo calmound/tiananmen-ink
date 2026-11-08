@@ -1,0 +1,5 @@
+{
+  "name": "C-full",
+  "note": "全部开启（SPEC 7.7 起始值）",
+  "tonesOn": 1, "linesOn": 1, "bleedOn": 1, "fadeOn": 1, "snowOn": 1, "cinnabarOn": 1, "paperOn": 1
+}
